@@ -1,9 +1,6 @@
-# BasinVis
-A Matlab application for stratigraphic and subsidence modelling of sedimentary basins based on well data.
+BasinVis 1.0 Release Notes:
 
-Release Notes:
-
-To start BasinVis 1.0 open Matlab and change the active directory to the location of the BasinVis files.
+To start BasinVis 1.0 open Matlab and change the active directory to the loacation of the BasinVis files.
 Then run "mainwindow" in the Matlab console.
 
 Data has to be filled in step by step (Study Area > Stratigraphic Units > Well Data Input > Parameter Input). Well and porosity data can be imported from excel spreadsheets. Buttons in the mainmenu become active as soon as required information in the previous data input windows is saved. 
