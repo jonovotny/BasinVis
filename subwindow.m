@@ -297,14 +297,18 @@ set(b, 'FaceColor', [135/255 206/255 250/255])
 
 bsdata = [cell2mat(backstrip{1}) 0];
 bsdata(2, :) = [cell2mat(backstrip{3}) 0];
-set(gca,'ColorOrderIndex',1);
+if (isprop(gca,'ColorOrderIndex')) %Matlab2014a workaround
+    set(gca,'ColorOrderIndex',1);
+end
 plot(ages, bsdata);
 eros = cell2mat(poro_data(:,6))';
 hasErosion = (sum(abs(eros)) ~= 0);
 eros = repmat([0 fliplr(eros)], 2, 1);
 
 if (hasErosion)
-    set(gca,'ColorOrderIndex',1);
+    if (isprop(gca,'ColorOrderIndex')) %Matlab2014a 
+        set(gca,'ColorOrderIndex',1);
+    end
     plot(ages, bsdata + eros, '--');
 end
 
@@ -350,10 +354,14 @@ end
 
 figure;
 hold on;
-set(gca,'ColorOrderIndex',1);
+if (isprop(gca,'ColorOrderIndex')) %Matlab2014a 
+    set(gca,'ColorOrderIndex',1);
+end
 plot(midages, [[0; 0] bsdata]);
 if (hasErosion)
-    set(gca,'ColorOrderIndex',1);
+    if (isprop(gca,'ColorOrderIndex')) %Matlab2014a 
+        set(gca,'ColorOrderIndex',1);
+    end
     plot(midages, [[0; 0] bsdata]+erosrates, '--');
 end
 xline = plot(xlimits,[0 0],'k');

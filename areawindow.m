@@ -248,7 +248,9 @@ else
         set(hAxes, 'Visible', 'off');
     end
 end
-view(3);
+if ishandle(hAxes)
+    view(3);
+end
 
 
 % --- Executes on button press in button_cancel.
