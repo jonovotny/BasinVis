@@ -107,17 +107,17 @@ function uitable1_CreateFcn(hObject, eventdata, handles)
 % handles    empty - handles not created until after all CreateFcns called
 set(hObject, 'Data', {});
 headers = {'<html><center>Well<br />Name</center></html>', ...
-           '<html><center>x<br /></center></html>', ...
-           '<html><center>y<br /></center></html>', ...
-           '<html><center>Total<br />Depth</center></html>', ...
-           '<html><center>Top of<br />Basement</center></html>',};
+           '<html><center>x [m]<br /></center></html>', ...
+           '<html><center>y [m]<br /></center></html>', ...
+           '<html><center>Total<br />Depth [m]</center></html>', ...
+           '<html><center>Top of<br />Basement [m]</center></html>',};
 strati_data = evalin('base', 'strati_data');
 widths = {65 50 50 65 65};
 formats = {'char' 'numeric' 'numeric' 'numeric' 'numeric'};
 editable = [true true true true true];
 for i = size(strati_data,1):-1:1
     name = strati_data(i,1);
-    head = strcat('<html><center>Top of<br />',name,'</center></html>');
+    head = strcat('<html><center>Top of<br />',name,' [m]</center></html>');
     headers(1,size(strati_data,1)-i+6) = head;
     widths(1,size(strati_data,1)-i+6) = {65};
     formats(1,size(strati_data,1)-i+6) = {'numeric'};
@@ -173,7 +173,7 @@ openfile = [openpath openfile];
 
 data = xlsdata(2:end,:);
 data(:,2:end) = cellfun(@filterCells2, data(:,2:end), 'UniformOutput', false);
-data(:,4:end) = cellfun(@divCells, data(:,4:end), 'UniformOutput', false);
+%data(:,4:end) = cellfun(@divCells, data(:,4:end), 'UniformOutput', false);
 
 assignin('base', 'well_custom_data', cell(size(data)));
 
@@ -188,8 +188,8 @@ else
     out = in;
 end
 
-function out = divCells(in)
-    out = in/1000;
+%function out = divCells(in)
+%    out = in/1000;
 
 
 

@@ -177,7 +177,7 @@ for layer = size(plotSettings,1):-1:1
     
 limits = cell2mat(axisSettings(1:2, 2:3));
 zlimit = [-axisSettings{3, 3} axisSettings{3, 2}];
-linespec = [cell2mat(plotSettings(layer, 6:7)) '-'];
+linespec = ['-' fliplr(cell2mat(plotSettings(layer, 6:7))) ];
 contourcolor = plotSettings{layer,9};
 shading = 'none';
 levels = axisSettings{3, 2}:-plotSettings{layer,10}:-axisSettings{3, 3};
@@ -194,56 +194,119 @@ if (plot(1,1) || plot(1,2) || plot(1,3) || layer == find(ismember(layerNames,con
         fig_title = [fig_title, ', '];
     end
     fig_title = [fig_title, layerNames{layer, 1}];
+    
+        if (get(handles.popup_plottype, 'Value') == 1)
+            [surfaceX, surfaceY, surfaceZ] = getSurfaceData('distri', layer, plotSettings(layer,3), data(:,1), data(:,2), data(:,layer+3), limits, quadsize);
+            [x, y, z] = getSurfaceData('distri', layer, 'none', data(:,1), data(:,2), data(:,layer+3), limits, quadsize);
+            
+        elseif (get(handles.popup_plottype, 'Value') == 2)
+            [surfaceX, surfaceY, surfaceZ] = getSurfaceData('distri_iso', layer, plotSettings(layer,3), data(:,1), data(:,2), diff_data(:,layer), limits, quadsize);
+            [x, y, z] = getSurfaceData('distri_iso', layer, 'none', data(:,1), data(:,2), diff_data(:,layer), limits, quadsize);
+            %[~, ~, top_z] = getSurfaceData('distri', layer-1, plotSettings(layer-1,3), data(:,1), data(:,2), data(:,layer+2), limits, quadsize);
+            %surfaceZ = arrayfun(@pos2zero, top_z) - arrayfun(@pos2zero, surfaceZ);
+        elseif (get(handles.popup_plottype, 'Value') == 3)
+            poro_data = evalin('base','poro_data');
+            poro_data = cell2mat(cellfun(@empty2nan, poro_data, 'UniformOutput', false));
+
+            poro_data = flipud(poro_data)';
+            decomp_data = nan(size(data,1),1);
+
+            for well = 1:size(data,1)
+               decomp_data (well,1) = decompact(poro_data(1,layer), poro_data(2,layer), data(well,layer+3), data(well,layer+4), 0);
+            end
+            [surfaceX, surfaceY, surfaceZ] = getSurfaceData('distri_decomp_iso', layer, plotSettings(layer,3), data(:,1), data(:,2), decomp_data, limits, quadsize);
+            [x, y, z] = getSurfaceData('distri_decomp_iso', layer, 'none', data(:,1), data(:,2), decomp_data, limits, quadsize);
+            
+            %[~, ~, top_z] = getSurfaceData('distri', layer-1, contSettings{1,3}, data(:,1), data(:,2), data(:,layer+2), limits, quadsize);
+            %surfaceZ = arrayfun(@pos2zero, top_z)- arrayfun(@pos2zero, surfaceZ);
+        elseif (get(handles.popup_plottype, 'Value') == 4)
+            strati_data = evalin('base','strati_data');
+            age_start = cell2mat(strati_data(:,2))';
+            age_end = cell2mat(strati_data(:,3))';
+            agediff = age_start - age_end;      
+            
+            if layer > size(agediff, 2)
+                [surfaceX, surfaceY, surfaceZ] = getSurfaceData('distri_rate', layer, plotSettings(layer,3), data(:,1), data(:,2), diff_data(:,layer).*0, limits, quadsize);
+                [x, y, z] = getSurfaceData('distri_rate', layer, 'none', data(:,1), data(:,2), diff_data(:,layer).*0, limits, quadsize);
+                
+            else
+                [surfaceX, surfaceY, surfaceZ] = getSurfaceData('distri_rate', layer, plotSettings(layer,3), data(:,1), data(:,2), diff_data(:,layer)./agediff(1,layer), limits, quadsize);
+                [x, y, z] = getSurfaceData('distri_rate', layer, 'none', data(:,1), data(:,2), diff_data(:,layer)./agediff(1,layer), limits, quadsize);
+                
+            end
+        elseif (get(handles.popup_plottype, 'Value') == 5)
+            strati_data = evalin('base','strati_data');
+            age_start = cell2mat(strati_data(:,2))';
+            age_end = cell2mat(strati_data(:,3))';
+            agediff = age_start - age_end;      
+            
+            if layer > size(agediff, 2)
+                [surfaceX, surfaceY, surfaceZ] = getSurfaceData('distri_rate', layer, plotSettings(layer,3), data(:,1), data(:,2), diff_data(:,layer).*0, limits, quadsize);
+                [x, y, z] = getSurfaceData('distri_rate', layer, 'none', data(:,1), data(:,2), diff_data(:,layer).*0, limits, quadsize);
+                
+            else
+                poro_data = evalin('base','poro_data');
+                poro_data = cell2mat(cellfun(@empty2nan, poro_data, 'UniformOutput', false));
+
+                poro_data = flipud(poro_data)';
+                decomp_data = nan(size(data,1),1);
+
+                for well = 1:size(data,1)
+                   decomp_data (well,1) = decompact(poro_data(1,layer), poro_data(2,layer), data(well,layer+3), data(well,layer+4), 0);
+                end
+                [surfaceX, surfaceY, surfaceZ] = getSurfaceData('distri_decomp_iso', layer, plotSettings(layer,3), data(:,1), data(:,2), decomp_data./agediff(1,layer), limits, quadsize);
+                [x, y, z] = getSurfaceData('distri_decomp_iso', layer, 'none', data(:,1), data(:,2), decomp_data./agediff(1,layer), limits, quadsize);
+                %[~, ~, top_z] = getSurfaceData('distri', layer-1, contSettings{1,3}, data(:,1), data(:,2), data(:,layer+2), limits, quadsize);
+                %surfaceZ = arrayfun(@pos2zero, top_z)- arrayfun(@pos2zero, surfaceZ);
+            end
+        end
+    
 end
 
 if plot(1,2)
-     if (strcmp(cp_type, 'single'))
-        sum_data = data(:,4:layer+3);
-        if size(sum_data,2) > 1
-            sum_data = sum(sum_data, 2);
-        end
-        [x, y, z] = getSurfaceData('distri_s', layer, 'none', data(:,1), data(:,2), sum_data, limits, quadsize);
-        if (layer > 1 && get(handles.popup_plottype, 'Value') == 2)
-            [x, y, z] = getSurfaceData('distri_s_iso', layer, 'none', data(:,1), data(:,2), data(:,layer+3), limits, quadsize);
-        end
-     else
-    [x, y, z] = getSurfaceData('distri', layer, 'none', data(:,1), data(:,2), data(:,layer+3), limits, quadsize);
-    if (get(handles.popup_plottype, 'Value') == 2)
-        [x, y, z] = getSurfaceData('distri_iso', layer, 'none', data(:,1), data(:,2), diff_data(:,layer), limits, quadsize);
-        %[~, ~, top_z] = getSurfaceData('distri', layer-1, 'none', data(:,1), data(:,2), data(:,layer+2), limits, quadsize);
-        %z = arrayfun(@pos2zero, top_z) - arrayfun(@pos2zero, z);
-    end
-     end
+%      if (strcmp(cp_type, 'single'))
+%         sum_data = data(:,4:layer+3);
+%         if size(sum_data,2) > 1
+%             sum_data = sum(sum_data, 2);
+%         end
+%         [x, y, z] = getSurfaceData('distri_s', layer, 'none', data(:,1), data(:,2), sum_data, limits, quadsize);
+%         if (layer > 1 && get(handles.popup_plottype, 'Value') == 2)
+%             [x, y, z] = getSurfaceData('distri_s_iso', layer, 'none', data(:,1), data(:,2), data(:,layer+3), limits, quadsize);
+%         end
+%      else
+%     [x, y, z] = getSurfaceData('distri', layer, 'none', data(:,1), data(:,2), data(:,layer+3), limits, quadsize);
+%     if (get(handles.popup_plottype, 'Value') == 2)
+%         [x, y, z] = getSurfaceData('distri_iso', layer, 'none', data(:,1), data(:,2), diff_data(:,layer), limits, quadsize);
+%         %[~, ~, top_z] = getSurfaceData('distri', layer-1, 'none', data(:,1), data(:,2), data(:,layer+2), limits, quadsize);
+%         %z = arrayfun(@pos2zero, top_z) - arrayfun(@pos2zero, z);
+%     end
+     %end
     x = x';
     y = y';
     z = z';
-    plotq = quiver3(x,y,zeros(1,size(x,2)),zeros(1,size(x,2)),zeros(1,size(x,2)),z,0,linespec,'markersize',3,'linewidth',1.0);
+    plotq = quiver3(x,y,zeros(1,size(x,2)),zeros(1,size(x,2)),zeros(1,size(x,2)),z,0,linespec,'markersize',20,'linewidth',1.0,'marker','.');
 end
 
 if plot(1,1)
-    if (strcmp(cp_type, 'single'))
-        [surfaceX, surfaceY, surfaceZ] = getSurfaceData('distri_s', layer, plotSettings(layer,3), data(:,1), data(:,2), data(:,layer+3), limits, quadsize);
-        if ~(get(handles.popup_plottype, 'Value') == 2)
-            surfaceZ = zeros(size(surfaceZ,1), size(surfaceZ,2));
-            for l = 1:layer
-                [~, ~, surfaceZ2] = getSurfaceData('distri_s', l, plotSettings(layer,3), data(:,1), data(:,2), data(:,l+3), limits, quadsize);
-                surfaceZ = surfaceZ + arrayfun(@pos2zero, surfaceZ2);
-            end
-        end
-    else
-    [surfaceX, surfaceY, surfaceZ] = getSurfaceData('distri', layer, plotSettings(layer,3), data(:,1), data(:,2), data(:,layer+3), limits, quadsize);
-        if (get(handles.popup_plottype, 'Value') == 2)
-            [surfaceX, surfaceY, surfaceZ] = getSurfaceData('distri_iso', layer, plotSettings(layer,3), data(:,1), data(:,2), diff_data(:,layer), limits, quadsize);
-            %[~, ~, top_z] = getSurfaceData('distri', layer-1, plotSettings(layer-1,3), data(:,1), data(:,2), data(:,layer+2), limits, quadsize);
-            %surfaceZ = arrayfun(@pos2zero, top_z) - arrayfun(@pos2zero, surfaceZ);
-        end
+%     if (strcmp(cp_type, 'single'))
+%         [surfaceX, surfaceY, surfaceZ] = getSurfaceData('distri_s', layer, plotSettings(layer,3), data(:,1), data(:,2), data(:,layer+3), limits, quadsize);
+%         if ~(get(handles.popup_plottype, 'Value') == 2)
+%             surfaceZ = zeros(size(surfaceZ,1), size(surfaceZ,2));
+%             for l = 1:layer
+%                 [~, ~, surfaceZ2] = getSurfaceData('distri_s', l, plotSettings(layer,3), data(:,1), data(:,2), data(:,l+3), limits, quadsize);
+%                 surfaceZ = surfaceZ + arrayfun(@pos2zero, surfaceZ2);
+%             end
+%         end
+%     else
     
-    end
+    
+%    end
+    surfaceZfin = surfaceZ;
     if use_masks
-        surfaceZ = surfaceZ .* masks{1,layer};
+        surfaceZfin = surfaceZfin .* masks{1,layer};
     end
     
-    plots = surf(surfaceX, surfaceY, surfaceZ, 'FaceColor', 'interp' ...
+    plots = surf(surfaceX, surfaceY, surfaceZfin, 'FaceColor', 'interp' ...
                                       , 'FaceLighting', shading ...
                                       , 'LineStyle',    'none' ...
                                   ,'SpecularColorReflectance', 0 ...  
@@ -253,29 +316,81 @@ end
 
 
 if plot(1,3)
-    if (strcmp(cp_type, 'single'))
-        [surfaceX, surfaceY, surfaceZ] = getSurfaceData('distri_s', layer, plotSettings(layer,3), data(:,1), data(:,2), data(:,layer+3), limits, quadsize);
-        if ~(get(handles.popup_plottype, 'Value') == 2)
-            surfaceZ = zeros(size(surfaceZ,1), size(surfaceZ,2));
-            for l = 1:layer
-                %[surfaceX, surfaceY, surfaceZ] = getSurfaceData('distri_iso', layer-1, plotSettings(layer-1,3), data(:,1), data(:,2), diff_data(:,layer-1), limits, quadsize);
-                [~, ~, surfaceZ2] = getSurfaceData('distri_s', l, plotSettings(layer,3), data(:,1), data(:,2), data(:,l+3), limits, quadsize);
-                surfaceZ = surfaceZ + arrayfun(@pos2zero, surfaceZ2);
-            end
-        end
-    else
-        [surfaceX, surfaceY, surfaceZ] = getSurfaceData('distri', layer, plotSettings(layer,3), data(:,1), data(:,2), data(:,layer+3), limits, quadsize);
-        
-        if (get(handles.popup_plottype, 'Value') == 2)
-            [surfaceX, surfaceY, surfaceZ] = getSurfaceData('distri_iso', layer, plotSettings(layer,3), data(:,1), data(:,2), diff_data(:,layer), limits, quadsize);
-            %[~, ~, top_z] = getSurfaceData('distri', layer-1, plotSettings(layer-1,3), data(:,1), data(:,2), data(:,layer+2), limits, quadsize);
-            %surfaceZ = arrayfun(@pos2zero, top_z) - arrayfun(@pos2zero, surfaceZ);
-        end
-    end
+%     if (strcmp(cp_type, 'single'))
+%         [surfaceX, surfaceY, surfaceZ] = getSurfaceData('distri_s', layer, plotSettings(layer,3), data(:,1), data(:,2), data(:,layer+3), limits, quadsize);
+%         if ~(get(handles.popup_plottype, 'Value') == 2)
+%             surfaceZ = zeros(size(surfaceZ,1), size(surfaceZ,2));
+%             for l = 1:layer
+%                 %[surfaceX, surfaceY, surfaceZ] = getSurfaceData('distri_iso', layer-1, plotSettings(layer-1,3), data(:,1), data(:,2), diff_data(:,layer-1), limits, quadsize);
+%                 [~, ~, surfaceZ2] = getSurfaceData('distri_s', l, plotSettings(layer,3), data(:,1), data(:,2), data(:,l+3), limits, quadsize);
+%                 surfaceZ = surfaceZ + arrayfun(@pos2zero, surfaceZ2);
+%             end
+%         end
+%     else
+%         [surfaceX, surfaceY, surfaceZ] = getSurfaceData('distri', layer, plotSettings(layer,3), data(:,1), data(:,2), data(:,layer+3), limits, quadsize);
+%         
+%         if (get(handles.popup_plottype, 'Value') == 2)
+%             [surfaceX, surfaceY, surfaceZ] = getSurfaceData('distri_iso', layer, plotSettings(layer,3), data(:,1), data(:,2), diff_data(:,layer), limits, quadsize);
+%             %[~, ~, top_z] = getSurfaceData('distri', layer-1, plotSettings(layer-1,3), data(:,1), data(:,2), data(:,layer+2), limits, quadsize);
+%             %surfaceZ = arrayfun(@pos2zero, top_z) - arrayfun(@pos2zero, surfaceZ);
+%         end
+%         
+%          if (get(handles.popup_plottype, 'Value') == 3)
+%             poro_data = evalin('base','poro_data');
+%             poro_data = cell2mat(cellfun(@empty2nan, poro_data, 'UniformOutput', false));
+% 
+%             poro_data = flipud(poro_data)';
+%             decomp_data = nan(size(data,1),1);
+% 
+%             for well = 1:size(data,1)
+%                decomp_data (well,1) = decompact(poro_data(1,layer), poro_data(2,layer), data(well,layer+3), data(well,layer+4), 0);
+%             end
+%             [surfaceX, surfaceY, surfaceZ] = getSurfaceData('distri_decomp_iso', layer, plotSettings(layer,3), data(:,1), data(:,2), decomp_data, limits, quadsize);
+%             %[~, ~, top_z] = getSurfaceData('distri', layer-1, contSettings{1,3}, data(:,1), data(:,2), data(:,layer+2), limits, quadsize);
+%             %surfaceZ = arrayfun(@pos2zero, top_z)- arrayfun(@pos2zero, surfaceZ);
+%         end
+%         if (get(handles.popup_plottype, 'Value') == 4)
+%             strati_data = evalin('base','strati_data');
+%             age_start = cell2mat(strati_data(:,2))';
+%             age_end = cell2mat(strati_data(:,3))';
+%             agediff = age_start - age_end;      
+%             
+%             if layer > size(agediff, 2)
+%                 [surfaceX, surfaceY, surfaceZ] = getSurfaceData('distri_rate', layer, plotSettings(layer,3), data(:,1), data(:,2), diff_data(:,layer).*0, limits, quadsize);
+%             else
+%                 [surfaceX, surfaceY, surfaceZ] = getSurfaceData('distri_rate', layer, plotSettings(layer,3), data(:,1), data(:,2), diff_data(:,layer)./agediff(1,layer), limits, quadsize);
+%             end
+%         end
+%         if (get(handles.popup_plottype, 'Value') == 5)
+%             strati_data = evalin('base','strati_data');
+%             age_start = cell2mat(strati_data(:,2))';
+%             age_end = cell2mat(strati_data(:,3))';
+%             agediff = age_start - age_end;      
+%             
+%             if layer > size(agediff, 2)
+%                 [surfaceX, surfaceY, surfaceZ] = getSurfaceData('distri_rate', layer, plotSettings(layer,3), data(:,1), data(:,2), diff_data(:,layer).*0, limits, quadsize);
+%             else
+%                 poro_data = evalin('base','poro_data');
+%                 poro_data = cell2mat(cellfun(@empty2nan, poro_data, 'UniformOutput', false));
+% 
+%                 poro_data = flipud(poro_data)';
+%                 decomp_data = nan(size(data,1),1);
+% 
+%                 for well = 1:size(data,1)
+%                    decomp_data (well,1) = decompact(poro_data(1,layer), poro_data(2,layer), data(well,layer+3), data(well,layer+4), 0);
+%                 end
+%                 [surfaceX, surfaceY, surfaceZ] = getSurfaceData('distri_decomp_iso', layer, contSettings{1,3}, data(:,1), data(:,2), decomp_data./agediff(1,layer), limits, quadsize);
+%                 %[~, ~, top_z] = getSurfaceData('distri', layer-1, contSettings{1,3}, data(:,1), data(:,2), data(:,layer+2), limits, quadsize);
+%                 %surfaceZ = arrayfun(@pos2zero, top_z)- arrayfun(@pos2zero, surfaceZ);
+%             end
+%         end
+%         
+%    end
+    surfaceZfin = surfaceZ;
     if use_masks
-        surfaceZ = surfaceZ .* masks{1,layer};
+        surfaceZfin = surfaceZfin .* masks{1,layer};
     end
-    plotc = contour3(surfaceX, surfaceY, surfaceZ, levels, contourcolor); % contourplot color 'w' - white 'k' - black
+    plotc = contour3(surfaceX, surfaceY, surfaceZfin, levels, contourcolor); % contourplot color 'w' - white 'k' - black
 end
 
 
@@ -285,12 +400,11 @@ set(gca,'DataAspectRatio', aspectRatio); %[1 1 1]);
 set(gca,'XLim', (limits(1,:)));
 set(gca,'YLim', (limits(2,:)));
 set(gca,'ZLim', zlimit);
-set(gca,'CameraPosition',  [-30 -30 20]);
 
 set(gca,'Color', 'white', 'XColor', 'black', 'YColor', 'black', 'ZColor', 'black'); %axis and axisbackground color
 end
 
-if strcmp(contSettings{1,1}, 'Depth') || strcmp(contSettings{1,1}, 'Isopach')
+if ~strcmp(contSettings{1,1}, 'none')
     layerNames = get(handles.tab_mapping, 'RowName');
     layer = find(ismember(layerNames,contSettings{1,2}));
     
@@ -304,16 +418,67 @@ if strcmp(contSettings{1,1}, 'Depth') || strcmp(contSettings{1,1}, 'Isopach')
             end
         end
     else
-        [surfaceX, surfaceY, surfaceZ] = getSurfaceData('distri', layer, contSettings{1,3}, data(:,1), data(:,2), data(:,layer+3), limits, quadsize);
+        if (strcmp(contSettings{1,1}, 'Depth'))
+            [surfaceX, surfaceY, surfaceZ] = getSurfaceData('distri', layer, contSettings{1,3}, data(:,1), data(:,2), data(:,layer+3), limits, quadsize);
+        end
         if (strcmp(contSettings{1,1}, 'Isopach'))
             [surfaceX, surfaceY, surfaceZ] = getSurfaceData('distri_iso', layer, contSettings{1,3}, data(:,1), data(:,2), diff_data(:,layer), limits, quadsize);
             %[~, ~, top_z] = getSurfaceData('distri', layer-1, contSettings{1,3}, data(:,1), data(:,2), data(:,layer+2), limits, quadsize);
             %surfaceZ = arrayfun(@pos2zero, top_z)- arrayfun(@pos2zero, surfaceZ);
         end
+        if (strcmp(contSettings{1,1}, 'Decomp. Isopach'))
+            poro_data = evalin('base','poro_data');
+            poro_data = cell2mat(cellfun(@empty2nan, poro_data, 'UniformOutput', false));
+
+            poro_data = flipud(poro_data)';
+            decomp_data = nan(size(data,1),1);
+
+            for well = 1:size(data,1)
+               decomp_data (well,1) = decompact(poro_data(1,layer), poro_data(2,layer), data(well,layer+3), data(well,layer+4), 0);
+            end
+            [surfaceX, surfaceY, surfaceZ] = getSurfaceData('distri_decomp_iso', layer, contSettings{1,3}, data(:,1), data(:,2), decomp_data, limits, quadsize);
+            %[~, ~, top_z] = getSurfaceData('distri', layer-1, contSettings{1,3}, data(:,1), data(:,2), data(:,layer+2), limits, quadsize);
+            %surfaceZ = arrayfun(@pos2zero, top_z)- arrayfun(@pos2zero, surfaceZ);
+        end
+        if (strcmp(contSettings{1,1}, 'Rate'))
+            strati_data = evalin('base','strati_data');
+            age_start = cell2mat(strati_data(:,2))';
+            age_end = cell2mat(strati_data(:,3))';
+            agediff = age_start - age_end;      
+            
+            if layer > size(agediff, 2)
+                [surfaceX, surfaceY, surfaceZ] = getSurfaceData('distri_rate', layer, contSettings{1,3}, data(:,1), data(:,2), diff_data(:,layer).*0, limits, quadsize);
+            else
+                [surfaceX, surfaceY, surfaceZ] = getSurfaceData('distri_rate', layer, contSettings{1,3}, data(:,1), data(:,2), diff_data(:,layer)./agediff(1,layer), limits, quadsize);
+            end
+        end
+        if (strcmp(contSettings{1,1}, 'Decomp. Rate'))
+            strati_data = evalin('base','strati_data');
+            age_start = cell2mat(strati_data(:,2))';
+            age_end = cell2mat(strati_data(:,3))';
+            agediff = age_start - age_end;      
+            
+            if layer > size(agediff, 2)
+                [surfaceX, surfaceY, surfaceZ] = getSurfaceData('distri_rate', layer, contSettings{1,3}, data(:,1), data(:,2), diff_data(:,layer).*0, limits, quadsize);
+            else
+                poro_data = evalin('base','poro_data');
+                poro_data = cell2mat(cellfun(@empty2nan, poro_data, 'UniformOutput', false));
+
+                poro_data = flipud(poro_data)';
+                decomp_data = nan(size(data,1),1);
+
+                for well = 1:size(data,1)
+                   decomp_data (well,1) = decompact(poro_data(1,layer), poro_data(2,layer), data(well,layer+3), data(well,layer+4), 0);
+                end
+                [surfaceX, surfaceY, surfaceZ] = getSurfaceData('distri_decomp_iso', layer, contSettings{1,3}, data(:,1), data(:,2), decomp_data./agediff(1,layer), limits, quadsize);
+                %[~, ~, top_z] = getSurfaceData('distri', layer-1, contSettings{1,3}, data(:,1), data(:,2), data(:,layer+2), limits, quadsize);
+                %surfaceZ = arrayfun(@pos2zero, top_z)- arrayfun(@pos2zero, surfaceZ);
+            end
+        end
     end
     
     
-    [x, y, z] = getSurfaceData('distri', layer, 'none', data(:,1), data(:,2), data(:,layer+3), limits, quadsize);
+    %[x, y, z] = getSurfaceData('distri', layer, 'none', data(:,1), data(:,2), data(:,layer+3), limits, quadsize);
     
     levels2 = axisSettings{3, 2}:-contSettings{1,5}:min(min(surfaceZ));
     slice_offset = contSettings{1,7};%10; %2.5 *2.5;
@@ -327,6 +492,9 @@ if strcmp(contSettings{1,1}, 'Depth') || strcmp(contSettings{1,1}, 'Isopach')
     assignin('base','surfaceV', surfaceV);
     %[plotcont, h] = contourf(surfaceX, surfaceY, surfaceZ, levels, contourcolor);
     surfaceZ = zeros(size(surfaceX, 1), size(surfaceX, 2), 2);
+    
+    zticks = get(gca,'ZTick');
+    set(gca,'ZTick', zticks);
     
     surfaceZ(:,:,1) = -axisSettings{3,3}-slice_offset;
     surfaceZ(:,:,2) = -axisSettings{3,3}-slice_offset-1;
@@ -350,26 +518,35 @@ set(gcf,'name', fig_title,'numbertitle','off')
 
 set(gca,'CLim', climit);
 
-xlabel('X [km]');
-ylabel('Y [km]');
-zlabel('Depth [km]');
+xlabel('X [m]');
+ylabel('Y [m]');
+zlabel('Depth [m]');
 
 
-set(gca,'ZTick', [-6 -4 -2 0]);
+%set(gca,'ZTick', [-6000 -4000 -2000 0]);
+ax = gca;
+%% TODO: fix exponent in Matlab2015a
+%ax.XAxis.Exponent = 0;
+%ax.YAxis.Exponent = 0;
+%ax.ZAxis.Exponent = 0;
 set(gca,'Box','on','XGrid', 'on', 'YGrid', 'on', 'ZGrid', 'on');
 
 view(-48,35);
-
+%view(0,90);
 fontsize = 10;
 set(gca, 'FontSize', fontsize);
 %colorbar;
 
-ztype = {'Depth: ', 'Depth: '};
+ztype = {'Depth: ', 'Depth: ', 'm', 'm'};
 if(get(handles.popup_plottype, 'Value') == 2)
     ztype{1,1} = 'Thickness: ';
 end
-if(strcmp(contSettings{1,1}, 'Isopach'))
+if(strcmp(contSettings{1,1}, 'Isopach') || strcmp(contSettings{1,1}, 'Decomp. Isopach'))
     ztype{1,2} = 'Thickness: ';
+end
+if(strcmp(contSettings{1,1}, 'Rate') || strcmp(contSettings{1,1}, 'Decomp. Rate'))
+    ztype{1,2} = 'Rate: ';
+    ztype{1,4} = 'm/Ma';
 end
 set(gca, 'UserData', ztype);
 
@@ -476,11 +653,11 @@ for i = 1:size(data,1);
     data{i,7} = getDefChoice(i+1,colors);
     data{i,8} = false;
     data{i,9} = 'k';
-    data{i,10} = 0.5;
+    data{i,10} = 500;
 end
 
 set(hObject, ...
-    'ColumnName', {'<html><center>Unit<br />Name</center></html>'; 'Surface'; '<html><center>Inter-<br />polation</center></html>';'<html><center>Surface<br />Colormap</center></html>'; '<html><center>Well<br />Location</center></html>'; '<html><center>Well<br />Symbol</center></html>'; '<html><center>Well<br />Color</center></html>'; 'Contours'; '<html><center>Contour<br />Color</center></html>'; '<html><center>Contour<br />Interval</center></html>' }, ...
+    'ColumnName', {'<html><center>Unit<br />Name</center></html>'; 'Surface'; '<html><center>Inter-<br />polation</center></html>';'<html><center>Surface<br />Colormap</center></html>'; '<html><center>Well<br />Location</center></html>'; '<html><center>Well<br />Symbol</center></html>'; '<html><center>Well<br />Color</center></html>'; 'Contours'; '<html><center>Contour<br />Color</center></html>'; '<html><center>Contour<br />Interval [m]</center></html>' }, ...
     'ColumnFormat', {'char' 'logical' interpols cmaps 'logical' symbols colors 'logical' colors 'numeric'}, ...
     'ColumnWidth', {70 60 70 70 60 50 50 60 50 75}, ...
     'RowName',rowHeaders, ...
@@ -529,10 +706,10 @@ function tab_axes_CreateFcn(hObject, eventdata, handles)
 data = cell(3,6);
 data(1,:) = {'X' 0 evalin('base', 'area_x_dim') 'km' 1 0.4};
 data(2,:) = {'Y' 0 evalin('base', 'area_y_dim') 'km' 1 0.4};
-data(3,:) = {'Z' 0 evalin('base', 'area_z_dim') 'km' 0.5 ''};
+data(3,:) = {'Z' 0 evalin('base', 'area_z_dim') 'km' 0.25 ''};
 
-data(1,:) = {'X' 0 evalin('base', 'area_x_dim') 'km' 1 0.1};
-data(2,:) = {'Y' 0 evalin('base', 'area_y_dim') 'km' 1 0.1};
+data(1,:) = {'X' 0 evalin('base', 'area_x_dim') 'km' 1 100};
+data(2,:) = {'Y' 0 evalin('base', 'area_y_dim') 'km' 1 100};
 
 set(hObject, 'Data', data);
 
@@ -590,7 +767,7 @@ colors = {'r' 'g' 'b' 'c' 'm' 'y' 'k' 'w'};
 none_colors = {'none' 'r' 'g' 'b' 'c' 'm' 'y' 'k' 'w'};
 symbols = {'+' 'o' '*' '.' 'x' 's' 'd' '^' 'v' '>' '<' 'p' 'h'};
 lines = {'-' '--' ':' '-.'};
-types = {'none', 'Depth', 'Isopach'};
+types = {'none', 'Depth', 'Isopach', 'Decomp. Isopach', 'Rate', 'Decomp. Rate'};
 strati_data = evalin('base', 'strati_data');
 
 rowHeaders = strati_data(:,1);
@@ -602,17 +779,25 @@ cont_data{1,1} = 'Depth';
 cont_data{1,2} = strati_data{1,1};
 cont_data{1,3} = 'TPS';
 cont_data{1,4} = 'k';
-cont_data{1,5} = 0.5;
+cont_data{1,5} = 500;
 cont_data{1,6} = 'none';
-cont_data{1,7} = 10;
+cont_data{1,7} = 10000;
 
 
 set(hObject, ...
    'ColumnName', {'<html><center>Type</center></html>'; 'Unit'; 'Interpolation';'<html><center>Contour Color</center></html>'; '<html><center>Contour Interval</html>' ; 'Color'; 'Offset'}, ...
    'ColumnFormat', {types rowHeaders interpols none_colors 'numeric' none_colors}, ...
-   'ColumnWidth', {95 95 95 95 95 95 95}, ...
+   'ColumnWidth', {95 95 95 95 115 95 95}, ...
    'ColumnEditable', [true true true true true true true], ...
    'Data', cont_data ...
 );
 
 assignin('base', 'distri_cont_data', get(hObject, 'Data'));
+
+
+function out = empty2nan(in)
+if isempty(in)
+    out = nan;
+else
+    out = in;
+end

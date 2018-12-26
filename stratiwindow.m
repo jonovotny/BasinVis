@@ -25,7 +25,6 @@ function varargout = stratiwindow(varargin)
 % Last Modified by GUIDE v2.5 31-Aug-2014 23:42:15
 setupWsVar('strati_data',{});
 setupWsVar('strati_sel',[0 0]);
-setupWsVar('strati_unit',{1 1000000 'MA'});
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
@@ -84,8 +83,6 @@ function button_save_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 assignin('base', 'strati_data', get(handles.uitable2, 'Data'));
-contents = cellstr(get(handles.unit,'String'));
-assignin('base','strati_unit', {get(handles.unit, 'Value') (1000^(3-get(handles.unit, 'Value'))) contents{get(handles.unit,'Value')}});
 uitable2_Saved_Edit(hObject, eventdata, handles);
 assignin('base', 'strati_assign', 1);
 set(evalin('base', 'well_button'), 'Enable', 'on');
@@ -106,7 +103,7 @@ function uitable2_CreateFcn(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 set(hObject, 'Data', {});
-set(hObject, 'ColumnName', {'Unit Name', 'Start Age', 'End Age'});
+set(hObject, 'ColumnName', {'Unit Name', 'Bottom Age [Ma]', 'Top Age [Ma]'});
 set(hObject, 'Data', evalin('base', 'strati_data'));
 
 
@@ -151,8 +148,6 @@ function button_cancel_Callback(hObject, eventdata, handles)
 
 data = evalin('base', 'strati_data');
 set(handles.uitable2, 'Data', data);
-unit = evalin('base','strati_unit{1}');
-set(handles.unit, 'Value', unit);
 
 uitable2_Saved_Edit(hObject, eventdata, handles);
 

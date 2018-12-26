@@ -35,7 +35,7 @@ initializeCaches();
 
 % Edit the above text to modify the response to help mainwindow
 
-% Last Modified by GUIDE v2.5 01-Dec-2015 23:56:49
+% Last Modified by GUIDE v2.5 23-Jun-2018 02:52:30
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -229,20 +229,18 @@ else
     assignin('base', 'area_x_dim', '');
     assignin('base', 'area_y_dim', '');
     assignin('base', 'area_z_dim', '');
-    assignin('base', 'area_unit',{1 1000 'km'});
 end
 
 data = load(openfile, 'strati_assign');
 vars = whos('-file', openfile);
 if ismember('strati_assign',{vars.name}) && data.strati_assign
-    evalin('base', 'load(openfile, ''strati_assign'', ''strati_data'', ''strati_unit'')');
+    evalin('base', 'load(openfile, ''strati_assign'', ''strati_data'')');
     set(evalin('base', 'well_button'), 'Enable', 'on');
 else
     set(evalin('base', 'well_button'), 'Enable', 'off');
     assignin('base', 'strati_assign', 0);
     assignin('base', 'strati_data',{});
     assignin('base', 'strati_sel',[0 0]);
-    assignin('base', 'strati_unit',{1 1000000 'MA'});
 end
 
 data = load(openfile, 'well_assign');
@@ -298,18 +296,61 @@ assignin('base', 'savefile', [putpath putfile]);
 evalin('base', 'save(savefile, ''project_name'')');
 
 
-if evalin('base', 'area_assign');
+if evalin('base', 'area_assign')
     evalin('base', 'save(savefile, ''area_assign'', ''area_x_dim'', ''area_y_dim'', ''area_z_dim'', ''area_unit'', ''-append'')');
 end
 
-if evalin('base', 'strati_assign');
-    evalin('base', 'save(savefile, ''strati_assign'', ''strati_data'', ''strati_unit'', ''-append'')');
+if evalin('base', 'strati_assign')
+    evalin('base', 'save(savefile, ''strati_assign'', ''strati_data'', ''-append'')');
 end
 
-if evalin('base', 'well_assign');
+if evalin('base', 'well_assign')
     evalin('base', 'save(savefile, ''well_assign'', ''well_data'', ''well_custom_data'', ''-append'')');
 end
 
-if evalin('base', 'poro_assign');
+if evalin('base', 'poro_assign')
     evalin('base', 'save(savefile, ''poro_assign'', ''poro_data'', ''well_params'', ''well_custom_params'', ''-append'')');
 end
+
+
+% --- Executes on button press in pushbutton18.
+function pushbutton18_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton18 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in pushbutton20.
+function pushbutton20_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton20 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in pushbutton21.
+function pushbutton21_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton21 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in pushbutton17.
+function pushbutton17_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton17 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+comptrendlibwindow
+
+% --- Executes on button press in pushbutton15.
+function pushbutton15_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton15 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+comptrendwindow
+
+
+% --- Executes on button press in pushbutton19.
+function pushbutton19_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton19 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)

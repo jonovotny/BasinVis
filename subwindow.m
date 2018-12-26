@@ -22,7 +22,7 @@ function varargout = subwindow(varargin)
 
 % Edit the above text to modify the response to help wellwindow
 setupWsVar('sub_well_ids',{});
-% Last Modified by GUIDE v2.5 26-Apr-2015 03:19:35
+% Last Modified by GUIDE v2.5 24-Dec-2018 23:31:04
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -118,7 +118,7 @@ poro_data = evalin('base', 'poro_data');
 rowHeaders = strati_data(:,1);
 
 
-rowHeaders(size(rowHeaders, 1)+1:size(rowHeaders, 1)+5, 1) = {' '; 'Base Sub';'Base Sub Rate'; 'Tect Sub';'Tect Sub Rate' };
+rowHeaders(size(rowHeaders, 1)+1:size(rowHeaders, 1)+5, 1) = {' '; 'Total Sub';'Total Sub Rate'; 'Tect Sub';'Tect Sub Rate' };
 set(hObject, 'RowName', {});
 set(hObject, 'RowName', rowHeaders);
 
@@ -166,9 +166,9 @@ end
 assignin('base','test',tops)
 
 write_to = 1;
-dens_water = 1;
-dens_grain = 2.68;
-dens_mantle = 3.3;
+dens_water = 1025;
+dens_grain = 2847;
+dens_mantle = 3300;
 
 strati_data = evalin('base', 'strati_data');
 age_diff = cell2mat(strati_data(:,2)) - cell2mat(strati_data(:,3));
@@ -186,7 +186,7 @@ for i = 1:size(tops,2)
         if ~isempty(tops{1,j}) && ~isempty(bottoms{1,j})
             if tops{1,j} ~= bottoms{1,j}
                 thickness = decompact(poro_data{j,1}, poro_data{j,2}, tops{1,j}, bottoms{1,j}, last_depth);
-                density = layer_density(tops{1,j}, thickness, poro_data{j,1}, poro_data{j,2}, dens_water, dens_grain);
+                density = layer_density(last_depth, thickness, poro_data{j,1}, poro_data{j,2}, dens_water, poro_data{j,5});
             else
                 thickness = 0;
                 density = 0;
@@ -317,8 +317,8 @@ end
 set(gca,'XDir', 'reverse');
 set(gca,'YDir', 'reverse');
 xlabel('Geologic Age (Ma)');
-ylabel('Depth (km)');
-legend('Water Depth', 'Basement', 'Tectonic');
+ylabel('Depth (m)');
+legend('Water Depth', 'Total Subsidence', 'Tectonic Subsidence');
 
 set(gcf,'name', ['Subsidence (' well_name ')'],'numbertitle','off');
 xlimits = xlim;
@@ -369,8 +369,8 @@ xline.Color(4) = 0.25;
 
 set(gca,'XDir', 'reverse');
 xlabel('Geologic Age (Ma)');
-ylabel('Rate (km/Ma)');
-legend('Rate BS', 'Rate TS');
+ylabel('Rate (m/Ma)');
+legend('Rate Total Sub', 'Rate Tectonic Sub');
 set(gcf,'name', ['Subsidence Rates (' well_name ')'],'numbertitle','off')
 hold off;
 

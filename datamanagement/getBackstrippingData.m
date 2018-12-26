@@ -68,9 +68,9 @@ function [data] = getBackstrippingData(well_id, interpolated)
     assignin('base','test',tops)
 
     write_to = 1;
-    dens_water = 1;
-    dens_grain = 2.68;
-    dens_mantle = 3.3;
+    dens_water = 1000;
+    dens_grain = 2847;
+    dens_mantle = 3300;
 
     strati_data = evalin('base', 'strati_data');
     age_diff = cell2mat(strati_data(:,2)) - cell2mat(strati_data(:,3));
@@ -87,7 +87,7 @@ function [data] = getBackstrippingData(well_id, interpolated)
         for j = i:-1:1
             if ~isempty(tops{1,j}) && ~isempty(bottoms{1,j})
                 thickness = decompact(poro_data{j,1}, poro_data{j,2}, tops{1,j}, bottoms{1,j}, last_depth);
-                density = layer_density(tops{1,j}, thickness, poro_data{j,1}, poro_data{j,2}, dens_water, dens_grain);
+                density = layer_density(last_depth, thickness, poro_data{j,1}, poro_data{j,2}, dens_water, poro_data{j,5});
 
                 dens_column = dens_column + density;
                 last_depth = last_depth + thickness;

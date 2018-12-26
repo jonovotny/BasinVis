@@ -340,8 +340,13 @@ zlabel('Depth [km]');%, 'FontSize',20);
 view(-20,40);
 colorbar;
 
+%if(test_type == 2 || test_type == 4)
+%    ztype{1,2} = 'Rate: ';
+%end
+ztype = {'Depth: ', 'Depth: ', 'm', 'm'};
 if(test_type == 2 || test_type == 4)
     ztype{1,2} = 'Rate: ';
+    ztype{1,4} = 'm/Ma';
 end
 set(gca, 'UserData', ztype);
 
@@ -472,8 +477,8 @@ data(1,:) = {'X' 0 evalin('base', 'area_x_dim') 'km' 1 0.4};
 data(2,:) = {'Y' 0 evalin('base', 'area_y_dim') 'km' 1 0.4};
 data(3,:) = {'Z' 0 evalin('base', 'area_z_dim') 'km' 0.5 ''};
 
-data(1,:) = {'X' 0 evalin('base', 'area_x_dim') 'km' 1 0.1};
-data(2,:) = {'Y' 0 evalin('base', 'area_y_dim') 'km' 1 0.1};
+data(1,:) = {'X' 0 evalin('base', 'area_x_dim') 'km' 1 100};
+data(2,:) = {'Y' 0 evalin('base', 'area_y_dim') 'km' 1 100};
 
 set(hObject, 'Data', data);
 
@@ -595,12 +600,12 @@ set(hObject, ...
 assignin('base', 'sub_well_data', get(hObject, 'Data'));
 
 
-function out = filterCells(in)
-if ~isempty(in)
-    out = in;
-else
-    out = NaN;
-end
+% function out = filterCells(in)
+% if ~isempty(in)
+%     out = in;
+% else
+%     out = NaN;
+% end
 
 
 % --- Executes during object creation, after setting all properties.

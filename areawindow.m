@@ -169,9 +169,6 @@ if ~numeric_check(get(handles.edit_z, 'String'), 'area_z_dim', 'Z');
     return
 end
 
-contents = cellstr(get(handles.unit,'String'));
-assignin('base','area_unit', {get(handles.unit, 'Value') (1000^(2-get(handles.unit, 'Value'))) contents{get(handles.unit,'Value')}});
-
 update_preview(handles.area_axes, handles.text_preview);
 assignin('base', 'area_assign', 1);
 set(evalin('base', 'strati_button'), 'Enable', 'on');

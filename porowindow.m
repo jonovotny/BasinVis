@@ -90,10 +90,10 @@ else
         well_params{well_id, 1} = [];
         well_params{well_id, 1} = get(handles.uitable2, 'Data');
         assignin('base', 'well_params', well_params);
-        evalin('base', ['well_custom_params(' num2str(well_id) ',1) = true']);
+        evalin('base', ['well_custom_params(' num2str(well_id) ',1) = true;']);
     else
-        if evalin('base', ['well_custom_params(' num2str(well_id) ',1)']);
-           evalin('base', ['well_custom_params(' num2str(well_id) ',1) = false']); 
+        if evalin('base', ['well_custom_params(' num2str(well_id) ',1)'])
+           evalin('base', ['well_custom_params(' num2str(well_id) ',1) = false;']); 
            evalin('base', ['well_params{' num2str(well_id) ',1} = []']);
         end
     end
@@ -137,7 +137,7 @@ end
 rownames = strati_data(:,1);
 
 set(hObject, 'Data', data);
-set(hObject, 'ColumnName', {'Init. Porosity', 'c', 'Waterdepth', 'Sealevel', 'Sed. Density', 'Uplift'});
+set(hObject, 'ColumnName', {'Init. Porosity', 'c', 'Waterdepth', 'Sealevel', 'Grain Density', 'Uplift'});
 set(hObject, 'ColumnWidth', {90 70 70 70 90 70});
 set(hObject, 'ColumnEditable', [true true true true true true]);
 set(hObject, 'ColumnFormat', {'numeric' 'numeric' 'numeric'  'numeric' 'numeric' 'numeric'});

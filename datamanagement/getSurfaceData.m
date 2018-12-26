@@ -34,11 +34,12 @@ function [surfX, surfY, surfZ] = getSurfaceData(type, layer, interpolation, x, y
         tps = tpaps(tpsXY, tpsZ,0.999999);
         surfZ = reshape(fnval(tps, [reshape(surfX, 1, []); reshape(surfY, 1, [])]), size(surfX, 1), size(surfX, 2));
     elseif (strcmp(interpolation, 'kriging'))
-        krigXY = filteredData(:,1:2);
-        krigZ  = filteredData(:,3);
+        krigXY = filteredData(:,1:2)./1000;
+        krigZ  = filteredData(:,3)./1000;
         v = variogram(krigXY, krigZ,'plotit',false,'maxdist',150);%
         [~,~,~,vstruct] = variogramfit(v.distance,v.val,[],[],[],'model','stable','plotit',false);
-        [surfZ,Zvar] = kriging(vstruct,krigXY(:,1),krigXY(:,2), krigZ, surfX, surfY);
+        [surfZ,Zvar] = kriging(vstruct,krigXY(:,1),krigXY(:,2), krigZ, surfX./1000, surfY./1000);
+        surfZ = surfZ.*1000;
     else
         surfZ = griddata(filteredData(:,1), filteredData(:,2), filteredData(:,3), surfX, surfY, char(interpolation));
     end
