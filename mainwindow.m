@@ -19,7 +19,10 @@ function varargout = mainwindow(varargin)
 %      instance to run (singleton)".
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
-%evalin('base',' clear variables');
+
+%#ok<*DEFNU>
+%#ok<*INUSL>
+%#ok<*INUSD>
 evalin('base','addpath(''datamanagement/'')');
 
 setupWsVar('area_assign', 0);
@@ -35,7 +38,7 @@ initializeCaches();
 
 % Edit the above text to modify the response to help mainwindow
 
-% Last Modified by GUIDE v2.5 23-Jun-2018 02:52:30
+% Last Modified by GUIDE v2.5 01-Jan-2019 19:08:14
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -58,7 +61,7 @@ end
 
 
 % --- Executes just before mainwindow is made visible.
-function mainwindow_OpeningFcn(hObject, eventdata, handles, varargin)
+function mainwindow_OpeningFcn(hObject, eventdata, handles, varargin) 
 % This function has no output args, see OutputFcn.
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -67,16 +70,15 @@ function mainwindow_OpeningFcn(hObject, eventdata, handles, varargin)
 
 % Choose default command line output for mainwindow
 
-%evalin('base', 'load(''matlab.mat'')');
 assignin('base', 'use_masks', false);
 assignin('base', 'area_button', handles.pushbutton1);
 assignin('base', 'strati_button', handles.pushbutton2);
 assignin('base', 'well_button', handles.pushbutton3);
 assignin('base', 'distri_button', handles.pushbutton4);
 assignin('base', 'poro_button', handles.pushbutton5);
+assignin('base', 'poro2_button', handles.pushbutton18);
 assignin('base', 'sub_button', handles.pushbutton6);
 assignin('base', 'subana_button', handles.pushbutton7);
-%assignin('base', 'well_data', cell(0,10));
 
 handles.output = hObject;
 
@@ -85,15 +87,13 @@ guidata(hObject, handles);
 
 % UIWAIT makes mainwindow wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
-[im, map, alpha] = imread('basinvislogo.png');
+[im, ~, alpha] = imread('basinvislogo.png');
 f = imshow(im, 'Parent', handles.axes1);
 set(f, 'AlphaData', alpha);
 
-assignin('base','test', handles.axes1);
-
 
 % --- Outputs from this function are returned to the command line.
-function varargout = mainwindow_OutputFcn(hObject, eventdata, handles) 
+function varargout = mainwindow_OutputFcn(hObject, eventdata, handles)
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -102,16 +102,8 @@ function varargout = mainwindow_OutputFcn(hObject, eventdata, handles)
 % Get default command line output from handles structure
 varargout{1} = handles.output;
 
-
-% --- Executes when figure1 is resized.
-function figure1_ResizeFcn(hObject, eventdata, handles)
-% hObject    handle to figure1 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
 % --- Executes on button press in pushbutton1.
-function pushbutton1_Callback(hObject, eventdata, handles)
+function pushbutton1_Callback(hObject, eventdata, handles) 
 % hObject    handle to pushbutton1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -159,17 +151,9 @@ function pushbutton7_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 submapwindow;
 
-
 % --- Executes on button press in pushbutton12.
 function pushbutton12_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton12 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-web('http://cs.brown.edu/~novotny/geologist-lee/basinvis.html');
-
-% --- Executes on button press in pushbutton13.
-function pushbutton13_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton13 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 web('http://cs.brown.edu/~novotny/geologist-lee/basinvis.html');
@@ -181,19 +165,33 @@ function pushbutton14_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 figure1_CloseRequestFcn(hObject, eventdata, handles);
 
-% --- Executes during object creation, after setting all properties.
-function axes1_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to axes1 (see GCBO)
+% --- Executes on button press in pushbutton18.
+function pushbutton18_Callback(hObject, eventdata, handles) 
+% hObject    handle to pushbutton18 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
+% handles    structure with handles and user data (see GUIDATA)
+porowindow;
 
-% Hint: place code in OpeningFcn to populate axes1
-% logo = imread('basinvislogo.png');
-% axes(hObject);
-% imshow(logo);
+% --- Executes on button press in pushbutton17.
+function pushbutton17_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton17 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+comptrendlibwindow;
 
-% use_masks = true
+% --- Executes on button press in pushbutton15.
+function pushbutton15_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton15 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+comptrendwindow;
 
+% --- Executes on button press in pushbutton19.
+function pushbutton19_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton19 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+sedprofilewindow;
 
 % --- Executes when user attempts to close figure1.
 function figure1_CloseRequestFcn(hObject, eventdata, handles)
@@ -205,7 +203,6 @@ function figure1_CloseRequestFcn(hObject, eventdata, handles)
 %delete(hObject);
 evalin('base','clear variables');
 closereq;
-
 
 % --------------------------------------------------------------------
 function uipushtoolopen_ClickedCallback(hObject, eventdata, handles)
@@ -261,17 +258,14 @@ else
     assignin('base', 'well_sel', [0 0]);
 end
 
-
 data = load(openfile, 'poro_assign');
 vars = whos('-file', openfile);
 if ismember('poro_assign',{vars.name}) && data.poro_assign
     evalin('base', 'load(openfile, ''poro_assign'', ''poro_data'', ''well_params'', ''well_custom_params'')');
     set(evalin('base', 'distri_button'), 'Enable', 'on');
     set(evalin('base', 'poro_button'), 'Enable', 'on');
-    
-
-set(evalin('base', 'sub_button'), 'Enable', 'on');
-set(evalin('base', 'subana_button'), 'Enable', 'on');
+    set(evalin('base', 'sub_button'), 'Enable', 'on');
+    set(evalin('base', 'subana_button'), 'Enable', 'on');
 else
     set(evalin('base', 'distri_button'), 'Enable', 'off');
     set(evalin('base', 'poro_button'), 'Enable', 'off');
@@ -280,10 +274,6 @@ else
     assignin('base', 'well_params', {});
     assignin('base', 'well_custom_params', []);
 end
-
-
-
-
 
 % --------------------------------------------------------------------
 function uipushtoolsave_ClickedCallback(hObject, eventdata, handles)
@@ -294,7 +284,6 @@ filename = [evalin('base', 'project_name') '.mat'];
 [putfile, putpath, ~] = uiputfile(filename, 'Save Project As...');
 assignin('base', 'savefile', [putpath putfile]);
 evalin('base', 'save(savefile, ''project_name'')');
-
 
 if evalin('base', 'area_assign')
     evalin('base', 'save(savefile, ''area_assign'', ''area_x_dim'', ''area_y_dim'', ''area_z_dim'', ''area_unit'', ''-append'')');
@@ -311,46 +300,3 @@ end
 if evalin('base', 'poro_assign')
     evalin('base', 'save(savefile, ''poro_assign'', ''poro_data'', ''well_params'', ''well_custom_params'', ''-append'')');
 end
-
-
-% --- Executes on button press in pushbutton18.
-function pushbutton18_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton18 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
-% --- Executes on button press in pushbutton20.
-function pushbutton20_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton20 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
-% --- Executes on button press in pushbutton21.
-function pushbutton21_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton21 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
-% --- Executes on button press in pushbutton17.
-function pushbutton17_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton17 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-comptrendlibwindow
-
-% --- Executes on button press in pushbutton15.
-function pushbutton15_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton15 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-comptrendwindow
-
-
-% --- Executes on button press in pushbutton19.
-function pushbutton19_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton19 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
