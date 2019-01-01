@@ -137,8 +137,8 @@ end
 rownames = strati_data(:,1);
 
 set(hObject, 'Data', data);
-set(hObject, 'ColumnName', {'Init. Porosity', 'c', 'Waterdepth', 'Sealevel', 'Grain Density', 'Uplift'});
-set(hObject, 'ColumnWidth', {90 70 70 70 90 70});
+set(hObject, 'ColumnName', {'Initial Porosity [%]', 'c', 'Waterdepth [m]', 'Sealevel [m]', 'Grain Density [kg/m³]', 'Uplift [m]'});
+set(hObject, 'ColumnWidth', {100 40 90 80 125 70});
 set(hObject, 'ColumnEditable', [true true true true true true]);
 set(hObject, 'ColumnFormat', {'numeric' 'numeric' 'numeric'  'numeric' 'numeric' 'numeric'});
 set(hObject, 'RowName', rownames);
