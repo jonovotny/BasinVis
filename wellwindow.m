@@ -23,6 +23,11 @@ function varargout = wellwindow(varargin)
 % Edit the above text to modify the response to help wellwindow
 
 % Last Modified by GUIDE v2.5 10-Jun-2015 00:07:44
+
+%#ok<*DEFNU>
+%#ok<*INUSL>
+%#ok<*INUSD>
+
 setupWsVar('well_unsaved', 0);
 setupWsVar('well_data', {});
 setupWsVar('well_custom_data', {});
@@ -99,6 +104,7 @@ changes_saved(handles, 'well_unsaved');
 assignin('base', 'well_assign', 1);
 set(evalin('base', 'distri_button'), 'Enable', 'on');
 set(evalin('base', 'poro_button'), 'Enable', 'on');
+set(evalin('base', 'poro2_button'), 'Enable', 'on');
 
 % --- Executes during object creation, after setting all properties.
 function uitable1_CreateFcn(hObject, eventdata, handles)
