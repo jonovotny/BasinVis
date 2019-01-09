@@ -38,7 +38,7 @@ initializeCaches();
 
 % Edit the above text to modify the response to help mainwindow
 
-% Last Modified by GUIDE v2.5 01-Jan-2019 19:08:14
+% Last Modified by GUIDE v2.5 08-Jan-2019 19:00:26
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -74,11 +74,17 @@ assignin('base', 'use_masks', false);
 assignin('base', 'area_button', handles.pushbutton1);
 assignin('base', 'strati_button', handles.pushbutton2);
 assignin('base', 'well_button', handles.pushbutton3);
+assignin('base', 'sedprofile_button', handles.pushbutton19);
 assignin('base', 'distri_button', handles.pushbutton4);
 assignin('base', 'poro_button', handles.pushbutton5);
 assignin('base', 'poro2_button', handles.pushbutton18);
 assignin('base', 'sub_button', handles.pushbutton6);
 assignin('base', 'subana_button', handles.pushbutton7);
+
+assignin('base', 'default_poro_data', {40.2 6096 0 0 2680 0});
+assignin('base', 'default_reconstruct', 'Kriging');
+assignin('base', 'default_cellsize', 100);
+assignin('base', 'default_offset', 100);
 
 handles.output = hObject;
 
@@ -246,9 +252,11 @@ if ismember('well_assign',{vars.name}) && data.well_assign
     evalin('base', 'load(openfile, ''well_assign'', ''well_data'', ''well_custom_data'', ''well_params'', ''well_custom_params'')');
     set(evalin('base', 'distri_button'), 'Enable', 'on');
     set(evalin('base', 'poro_button'), 'Enable', 'on');
+    set(evalin('base', 'poro2_button'), 'Enable', 'on');
 else
     set(evalin('base', 'distri_button'), 'Enable', 'off');
     set(evalin('base', 'poro_button'), 'Enable', 'off');
+    set(evalin('base', 'poro2_button'), 'Enable', 'off');
     assignin('base', 'well_assign', 0);
     assignin('base', 'well_unsaved', 0);
     assignin('base', 'well_data', {});
@@ -264,6 +272,7 @@ if ismember('poro_assign',{vars.name}) && data.poro_assign
     evalin('base', 'load(openfile, ''poro_assign'', ''poro_data'', ''well_params'', ''well_custom_params'')');
     set(evalin('base', 'distri_button'), 'Enable', 'on');
     set(evalin('base', 'poro_button'), 'Enable', 'on');
+    set(evalin('base', 'poro2_button'), 'Enable', 'on');
     set(evalin('base', 'sub_button'), 'Enable', 'on');
     set(evalin('base', 'subana_button'), 'Enable', 'on');
 else
@@ -300,3 +309,11 @@ end
 if evalin('base', 'poro_assign')
     evalin('base', 'save(savefile, ''poro_assign'', ''poro_data'', ''well_params'', ''well_custom_params'', ''-append'')');
 end
+
+
+% --------------------------------------------------------------------
+function uipushtool6_ClickedCallback(hObject, eventdata, handles)
+% hObject    handle to uipushtool6 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+optionswindow;
