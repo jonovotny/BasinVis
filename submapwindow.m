@@ -420,7 +420,7 @@ lines = {'-' '--' ':' '-.'};
 
 for i = 1:size(data,1);
     data{i,2} = false;
-    data{i,3} = 'TPS';
+    data{i,3} = 'kriging';
     data{i,4} = 'Jet'; %getDefChoice(i,colors);
     data{i,5} = false;
     data{i,6} = getDefChoice(i,symbols);
@@ -533,7 +533,7 @@ rowHeaders = rowHeaders';
 
 cont_data{1,1} = 'none';
 cont_data{1,2} = strati_data{1,1};
-cont_data{1,3} = 'TPS';
+cont_data{1,3} = 'kriging';
 cont_data{1,4} = 'k';
 cont_data{1,5} = 0.5;
 cont_data{1,6} = 'none';
