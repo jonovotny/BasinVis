@@ -23,8 +23,13 @@ function varargout = stratiwindow(varargin)
 % Edit the above text to modify the response to help stratiwindow
 
 % Last Modified by GUIDE v2.5 31-Aug-2014 23:42:15
+
+%#ok<*DEFNU>
+%#ok<*INUSL>
+%#ok<*INUSD>
 setupWsVar('strati_data',{});
 setupWsVar('strati_sel',[0 0]);
+
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
