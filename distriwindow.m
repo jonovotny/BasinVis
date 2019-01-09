@@ -93,7 +93,7 @@ layerNames = strati_data(:,1);
 layerNames{size(layerNames, 1)+1, 1} = 'BA';
 
 first_plot = true;
-fig_title = 'Stratigraphic Setting (';
+fig_title = 'Stratigraphic Model (';
 
 
 try

@@ -93,7 +93,7 @@ layerNames = strati_data(:,1);
 layerNames{size(layerNames, 1)+1, 1} = 'BA';
 
 first_plot = true;
-fig_title = 'Subsidence Mapping (';
+fig_title = 'Subsidence Model (';
 
 
 sel_wells = get(handles.uitable4, 'Data');
