@@ -285,9 +285,9 @@ if ~strcmp(contSettings{1,1}, 'none')
     test_type = contSettings{1,1};
 
     switch test_type
-        case 'Basement Subsidence'
+        case 'Total Subsidence'
             test_type = 1;
-        case 'Basement Subsidence Rate'
+        case 'Total Subsidence Rate'
             test_type = 2;
         case 'Tectonic Subsidence'
             test_type = 3;
@@ -523,7 +523,7 @@ colors = {'r' 'g' 'b' 'c' 'm' 'y' 'k' 'w'};
 none_colors = {'none' 'r' 'g' 'b' 'c' 'm' 'y' 'k' 'w'};
 symbols = {'+' 'o' '*' '.' 'x' 's' 'd' '^' 'v' '>' '<' 'p' 'h'};
 lines = {'-' '--' ':' '-.'};
-types = {'none', 'Basement Subsidence', 'Basement Subsidence Rate', 'Tectonic Subsidence', 'Tectonic Subsidence Rate'};
+types = {'none', 'Total Subsidence', 'Total Subsidence Rate', 'Tectonic Subsidence', 'Tectonic Subsidence Rate'};
 strati_data = evalin('base', 'strati_data');
 
 rowHeaders = strati_data(:,1);
@@ -535,13 +535,13 @@ cont_data{1,1} = 'none';
 cont_data{1,2} = strati_data{1,1};
 cont_data{1,3} = 'kriging';
 cont_data{1,4} = 'k';
-cont_data{1,5} = 0.5;
+cont_data{1,5} = 500;
 cont_data{1,6} = 'none';
-cont_data{1,7} = 10;
+cont_data{1,7} = 10000;
 
 
 set(hObject, ...
-   'ColumnName', {'<html><center>Type</center></html>'; 'Unit'; 'Interpolation';'<html><center>Contour Color</center></html>'; '<html><center>Contour Interval</html>' ; 'Color'; 'Offset'}, ...
+   'ColumnName', {'<html><center>Type</center></html>'; 'Unit'; 'Interpolation';'<html><center>Contour Color</center></html>'; '<html><center>Contour Interval [m]</html>' ; 'Color'; 'Offset [m]'}, ...
    'ColumnFormat', {types rowHeaders interpols none_colors 'numeric' none_colors}, ...
    'ColumnWidth', {160 80 80 80 80 80 80}, ...
    'ColumnEditable', [true true true true true true true], ...
