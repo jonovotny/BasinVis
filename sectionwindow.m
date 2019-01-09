@@ -152,7 +152,7 @@ wellData = evalin('base', 'well_data');
 data = cell2mat(cellfun(@filterCells, wellData(:,2:size(wellData,2)), 'UniformOutput', false));
 data(:,4:size(data,2)) = fliplr(data(:,4:size(data,2)));
 limits = [0 evalin('base', 'area_x_dim'); 0 evalin('base', 'area_y_dim')];
-quadsize = [0.4 0.4];
+quadsize = [100 100];
 
 temp_data = data(:,4:end);
 temp_data(:,1) = arrayfun(@nan2zero, temp_data(:,1));
