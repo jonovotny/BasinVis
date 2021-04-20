@@ -120,7 +120,7 @@ yL(1,2) = age_start(end);
 set(gca, 'ylim', yL);
 set(gca,'YDir','Reverse')
 line([0 0], ylim, 'Color', 'k');
-xlabel('Vertical Displacement Rate [km/Ma]');%, 'FontSize',20);
+xlabel('Vertical Displacement Rate [m/Ma]');%, 'FontSize',20);
 ylabel('Geologic Age [Ma]');
 
 names = get(handles.popup_well1, 'String');
@@ -241,6 +241,8 @@ init_wells(handles);
 hold on;
 scatter(well_pos(well2_ids,1),well_pos(well2_ids,2), 'bx');
 plot(pos(1,:),pos(2,:), 'o-r');
+xlabel('X [m]');
+ylabel('Y [m]');
 hold off;
 
 % --- Executes during object creation, after setting all properties.

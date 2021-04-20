@@ -118,7 +118,7 @@ poro_data = evalin('base', 'poro_data');
 rowHeaders = strati_data(:,1);
 
 
-rowHeaders(size(rowHeaders, 1)+1:size(rowHeaders, 1)+5, 1) = {' '; 'Total Sub';'Total Sub Rate'; 'Tect Sub';'Tect Sub Rate' };
+rowHeaders(size(rowHeaders, 1)+1:size(rowHeaders, 1)+5, 1) = {' '; 'Total Sub [m]';'Total Sub Rate [m/Ma]'; 'Tect Sub [m]';'Tect Sub Rate [m/Ma]' };
 set(hObject, 'RowName', {});
 set(hObject, 'RowName', rowHeaders);
 
@@ -167,7 +167,6 @@ assignin('base','test',tops)
 
 write_to = 1;
 dens_water = 1025;
-dens_grain = 2847;
 dens_mantle = 3300;
 
 strati_data = evalin('base', 'strati_data');

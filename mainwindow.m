@@ -253,10 +253,12 @@ if ismember('well_assign',{vars.name}) && data.well_assign
     set(evalin('base', 'distri_button'), 'Enable', 'on');
     set(evalin('base', 'poro_button'), 'Enable', 'on');
     set(evalin('base', 'poro2_button'), 'Enable', 'on');
+    set(evalin('base', 'sedprofile_button'), 'Enable', 'on');
 else
     set(evalin('base', 'distri_button'), 'Enable', 'off');
     set(evalin('base', 'poro_button'), 'Enable', 'off');
     set(evalin('base', 'poro2_button'), 'Enable', 'off');
+    set(evalin('base', 'sedprofile_button'), 'Enable', 'off');
     assignin('base', 'well_assign', 0);
     assignin('base', 'well_unsaved', 0);
     assignin('base', 'well_data', {});

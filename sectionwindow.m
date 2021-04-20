@@ -221,13 +221,13 @@ set(gcf,'name', fig_title,'numbertitle','off')
 
 switch section_type
     case 1
-        xlabel('Y [km]');%, 'FontSize',20);
+        xlabel('Y [m]');%, 'FontSize',20);
     case 2
-        xlabel('X [km]');%, 'FontSize',20);
+        xlabel('X [m]');%, 'FontSize',20);
     case 3
-        xlabel('Section Path [km]');%, 'FontSize',20);
+        xlabel('Section Path [m]');%, 'FontSize',20);
 end
-ylabel('Depth [km]');%, 'FontSize',20)
+ylabel('Depth [m]');%, 'FontSize',20)
 layerNames = fliplr(layerNames');
 legend(layerNames, 'Orientation', 'horizontal', 'Location', 'southoutside');
 
@@ -541,6 +541,8 @@ pos = [point1' point2'];
 init_wells(handles);
 hold on;
 plot(pos(1,:),pos(2,:), 'x-b');
+xlabel('X [m]')
+ylabel('Y [m]')
 if get(handles.chk_border, 'Value') && (section_type == 3)
     
     diff_y = (point2(1,2)-point1(1,2));

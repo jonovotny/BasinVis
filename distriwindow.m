@@ -630,8 +630,8 @@ end
 strati_data = evalin('base', 'strati_data');
 if size(data,1) ~= size(strati_data,1)
     data = cell(size(strati_data,1),4);
-    data(:,1) = strati_data(:,1);
-    data{size(data,1)+1, 1} = 'Basement';
+    data(:,1) = strati_data(:,3);
+    data{size(data,1)+1, 1} = '';
     assignin('base', 'distri_plot_data', data);
 end
 
@@ -657,7 +657,7 @@ for i = 1:size(data,1);
 end
 
 set(hObject, ...
-    'ColumnName', {'<html><center>Unit<br />Name</center></html>'; 'Surface'; '<html><center>Inter-<br />polation</center></html>';'<html><center>Surface<br />Colormap</center></html>'; '<html><center>Well<br />Location</center></html>'; '<html><center>Well<br />Symbol</center></html>'; '<html><center>Well<br />Color</center></html>'; 'Contours'; '<html><center>Contour<br />Color</center></html>'; '<html><center>Contour<br />Interval [m]</center></html>' }, ...
+    'ColumnName', {'<html><center>Unit<br />End Age</center></html>'; 'Surface'; '<html><center>Inter-<br />polation</center></html>';'<html><center>Surface<br />Colormap</center></html>'; '<html><center>Well<br />Location</center></html>'; '<html><center>Well<br />Symbol</center></html>'; '<html><center>Well<br />Color</center></html>'; 'Contours'; '<html><center>Contour<br />Color</center></html>'; '<html><center>Contour<br />Interval [m]</center></html>' }, ...
     'ColumnFormat', {'char' 'logical' interpols cmaps 'logical' symbols colors 'logical' colors 'numeric'}, ...
     'ColumnWidth', {70 60 70 70 60 50 50 60 50 75}, ...
     'RowName',rowHeaders, ...

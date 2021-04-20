@@ -230,6 +230,11 @@ if isnumeric(x) && isnumeric(y) && isnumeric(z) && ~isnan(x) && ~isnan(y) && ~is
         set(hAxes, 'xlim', [0 x]);
         set(hAxes, 'ylim', [0 y]);
         set(hAxes, 'zlim', [0 z]);
+        %Axis labels look terrible here, don't activate
+        
+        set(hAxes.XLabel, 'Visible', 'off');
+        set(hAxes.YLabel, 'Visible', 'off');
+        set(hAxes.ZLabel, 'Visible', 'off');
 
         set(hAxes, 'Visible', 'on');
     end

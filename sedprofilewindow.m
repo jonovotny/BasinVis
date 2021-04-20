@@ -22,7 +22,7 @@ function varargout = settingwindow(varargin)
 
 % Edit the above text to modify the response to help settingwindow
 
-% Last Modified by GUIDE v2.5 13-Aug-2018 17:52:04
+% Last Modified by GUIDE v2.5 29-Jun-2019 14:03:03
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -114,18 +114,19 @@ well_id = get(handles.popup_well1, 'Value');
 well_data = evalin('base', ['well_data(' num2str(well_id) ', 5:end)']);
 well_data = fliplr(cell2mat(cellfun(@empty2nan, well_data, 'UniformOutput', false)));
 
-poro_data = evalin('base','poro_data');
-if evalin('base', ['well_custom_params(' num2str(well_id) ',1)'])
-    poro_data = evalin('base', ['well_params{' num2str(well_id) ',1}']);
-end
-poro_data = cell2mat(cellfun(@empty2nan, poro_data, 'UniformOutput', false));
-num_layers = size(poro_data,1);
-poro_data = flipud(poro_data)';
-decomp_data = nan(1,num_layers);
+if (get(handles.checkbox1,'Value') && evalin('base', 'poro_assign'))
+    poro_data = evalin('base','poro_data');
+    if evalin('base', ['well_custom_params(' num2str(well_id) ',1)'])
+        poro_data = evalin('base', ['well_params{' num2str(well_id) ',1}']);
+    end
+    poro_data = cell2mat(cellfun(@empty2nan, poro_data, 'UniformOutput', false));
+    num_layers = size(poro_data,1);
+    poro_data = flipud(poro_data)';
+    decomp_data = nan(1,num_layers);
 
-for layer = 1:num_layers
-   decomp_data (1,layer) = decompact(poro_data(1,layer), poro_data(2,layer), well_data(layer), well_data(layer+1), 0);
-end
+    for layer = 1:num_layers
+       decomp_data (1,layer) = decompact(poro_data(1,layer), poro_data(2,layer), well_data(layer), well_data(layer+1), 0);
+    end
 
 strati_data = evalin('base','strati_data');
 ages = cell2mat(strati_data(:,3))';
@@ -186,6 +187,65 @@ xlabel('Sed. Rate [m/Ma]');
 legend({'comp.', 'decomp.'},'Location','southeast');
 xlim([0 max(max([sed_rate_stairs; decomp_sed_rate_stairs]))*1.05]);
 
+else
+
+strati_data = evalin('base','strati_data');
+ages = cell2mat(strati_data(:,3))';
+
+age_start = cell2mat(strati_data(:,2))';
+age_end = cell2mat(strati_data(:,3))';
+age_plot = [age_end(1) age_start];
+agediff = age_start - age_end;
+
+axes(handles.axes1);
+plot(age_plot,well_data, '.-');
+set(gca,'Ydir','reverse');
+ylabel('Depth [m]');
+xlabel('Age [Ma]');
+
+
+thickness = well_data(2:end)-well_data(1:end-1);
+thickness_stairs = reshape(repmat(thickness,2,1),1,[]);
+
+depth_stairs = reshape(repmat(well_data,2,1),1,[]);
+
+axes(handles.axes2);
+plot(thickness_stairs,depth_stairs(2:end-1), '.-');
+set(gca,'Ydir','reverse');
+ylabel('Depth [m]');
+xlabel('Thickness [m]');
+xlim([0 max(max(thickness_stairs))*1.05]);
+
+
+sed_rate = thickness./agediff;
+sed_rate_stairs = reshape(repmat(sed_rate,2,1),1,[]);
+
+axes(handles.axes3);
+plot(sed_rate_stairs,depth_stairs(2:end-1), '.-');
+set(gca,'Ydir','reverse');
+ylabel('Depth [m]');
+xlabel('Sed. Rate [m/Ma]');
+xlim([0 max(max(sed_rate_stairs))*1.05]);
+
+age_stairs = [age_end(1) reshape(repmat(age_start,2,1),1,[])];
+axes(handles.axes4);
+plot(thickness_stairs,age_stairs(1:end-1), '.-');
+set(gca,'Ydir','reverse');
+ylabel('Age [Ma]');
+xlabel('Thickness [m]');
+xlim([0 max(max(thickness_stairs))*1.05]);
+
+axes(handles.axes5);
+plot(sed_rate_stairs,age_stairs(1:end-1), '.-');
+set(gca,'Ydir','reverse');
+ylabel('Age [Ma]');
+xlabel('Sed. Rate [m/Ma]');
+legend({'comp.'},'Location','southeast');
+xlim([0 max(max(sed_rate_stairs))*1.05]);
+
+    
+end
+
 
 function out = empty2nan(in)
 if isempty(in)
@@ -194,3 +254,13 @@ else
     out = in;
 end
 
+
+
+% --- Executes on button press in checkbox1.
+function checkbox1_Callback(hObject, eventdata, handles)
+% hObject    handle to checkbox1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of checkbox1
+update_plots(handles);

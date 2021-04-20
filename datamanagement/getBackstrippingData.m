@@ -11,10 +11,10 @@ function [data] = getBackstrippingData(well_id, interpolated)
     
     
     backstripCache = evalin('base', 'backstrip_cache');
-    if (backstripCache.isKey(key))
-        data = backstripCache(key);
-        return;
-    end
+%     if (backstripCache.isKey(key))
+%         data = backstripCache(key);
+%         return;
+%     end
 
     poro_data = evalin('base','poro_data');
     if evalin('base', ['well_custom_params(' num2str(well_id) ',1)'])

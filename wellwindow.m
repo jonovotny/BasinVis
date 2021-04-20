@@ -105,6 +105,7 @@ assignin('base', 'well_assign', 1);
 set(evalin('base', 'distri_button'), 'Enable', 'on');
 set(evalin('base', 'poro_button'), 'Enable', 'on');
 set(evalin('base', 'poro2_button'), 'Enable', 'on');
+set(evalin('base', 'sedprofile_button'), 'Enable', 'on');
 
 % --- Executes during object creation, after setting all properties.
 function uitable1_CreateFcn(hObject, eventdata, handles)
